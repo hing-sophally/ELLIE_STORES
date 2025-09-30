@@ -12,13 +12,21 @@ Route::get('/user-login', [LoginController::class, 'login']);
 Route::post('/doLogin', [LoginController::class, 'doLogin']);
 Route::post('/doRegister', [LoginController::class, 'doRegister']);
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
-Route::get('/forgotPassword', [ForgotPassword::class, 'showForm'])->name('password.request');
-Route::post('/forgotPassword', [ForgotPassword::class, 'sendResetLink'])->name('password.email');
-Route::get('/resetPassword/{token}', [ForgotPassword::class, 'showResetForm'])->name('password.reset');
-Route::post('/resetPassword', [ForgotPassword::class, 'resetPassword'])->name('password.update');
+// Route::get('/forgotPassword', [ForgotPassword::class, 'showForm'])->name('password.request');
+// Route::post('/forgotPassword', [ForgotPassword::class, 'sendResetLink'])->name('password.email');
+// Route::get('/resetPassword/{token}', [ForgotPassword::class, 'showResetForm'])->name('password.reset');
+// Route::post('/resetPassword', [ForgotPassword::class, 'resetPassword'])->name('password.update');
 Route::get('/verify-otp', [LoginController::class, 'showOtpForm'])->name('otp.form');
 Route::post('/verify-otp', [LoginController::class, 'verifyOtp'])->name('otp.verify');
 Route::get('/otp/resend', [LoginController::class, 'resendOtp'])->name('otp.resend');
+
+// Forgot password
+Route::get('/user/forgot-password', [ForgotPassword::class, 'showForm'])->name('password.request');
+Route::post('/user/forgot-password', [ForgotPassword::class, 'sendResetLink'])->name('password.email');
+
+// Reset password
+Route::get('/user/reset-password/{token}', [ForgotPassword::class, 'showResetForm'])->name('password.reset');
+Route::post('/user/reset-password', [ForgotPassword::class, 'resetPassword'])->name('password.update');
 
 
 

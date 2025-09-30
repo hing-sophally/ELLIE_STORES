@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Verify OTP</title>
+    <title>Verify OTP - Ellie Store</title>
     <style>
         * {
             margin: 0;
@@ -11,9 +11,17 @@
             box-sizing: border-box;
         }
 
+        :root {
+            --primary-color: #592F7B;
+            --secondary-color: #783F91;
+            --accent-color: #BC98C4;
+            --dark-color: #391F4F;
+            --darkest-color: #220D38;
+        }
+
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #BC98C4 0%, #592F7B 100%);
             min-height: 100vh;
             display: flex;
             align-items: center;
@@ -36,26 +44,46 @@
         }
 
         .icon-wrapper {
-            width: 64px;
-            height: 64px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             margin: 0 auto 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .icon-wrapper::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, transparent 70%);
+            animation: pulse 15s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
         }
 
         .icon-wrapper svg {
-            width: 32px;
-            height: 32px;
+            width: 34px;
+            height: 34px;
             stroke: white;
+            position: relative;
+            z-index: 1;
         }
 
         h2 {
-            color: #1a202c;
+            color: var(--primary-color);
             font-size: 28px;
-            font-weight: 600;
+            font-weight: 700;
             margin-bottom: 8px;
         }
 
@@ -68,7 +96,7 @@
         .error-list {
             background: #fff5f5;
             border: 1px solid #fc8181;
-            border-radius: 8px;
+            border-radius: 12px;
             padding: 16px;
             margin-bottom: 24px;
         }
@@ -91,6 +119,18 @@
             font-size: 16px;
         }
 
+        .success-message {
+            background: #d4edda;
+            border: 1px solid #28a745;
+            border-radius: 12px;
+            padding: 16px;
+            margin-top: 20px;
+            color: #155724;
+            text-align: center;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
         .form-group {
             margin-bottom: 24px;
         }
@@ -99,7 +139,7 @@
             display: block;
             color: #2d3748;
             font-size: 14px;
-            font-weight: 500;
+            font-weight: 600;
             margin-bottom: 8px;
         }
 
@@ -110,15 +150,15 @@
             letter-spacing: 8px;
             text-align: center;
             border: 2px solid #e2e8f0;
-            border-radius: 8px;
+            border-radius: 12px;
             transition: all 0.3s ease;
             font-weight: 500;
         }
 
         input[type="text"]:focus {
             outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 3px rgba(188, 152, 196, 0.2);
         }
 
         input[type="text"]::placeholder {
@@ -128,20 +168,20 @@
         button[type="submit"] {
             width: 100%;
             padding: 14px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
             color: white;
             font-size: 16px;
             font-weight: 600;
             border: none;
-            border-radius: 8px;
+            border-radius: 12px;
             cursor: pointer;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 4px 12px rgba(89, 47, 123, 0.4);
         }
 
         button[type="submit"]:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+            box-shadow: 0 6px 20px rgba(89, 47, 123, 0.5);
         }
 
         button[type="submit"]:active {
@@ -156,14 +196,14 @@
         }
 
         .resend-link a {
-            color: #667eea;
+            color: var(--secondary-color);
             text-decoration: none;
-            font-weight: 500;
+            font-weight: 600;
             transition: color 0.3s ease;
         }
 
         .resend-link a:hover {
-            color: #764ba2;
+            color: var(--primary-color);
             text-decoration: underline;
         }
 
@@ -219,36 +259,33 @@
             <button type="submit">Verify Code</button>
         </form>
 
-     <div class="resend-link">
-        Didn't receive the code? <a href="#" id="resend-otp">Resend</a>
+        <div class="resend-link">
+            Didn't receive the code? <a href="#" id="resend-otp">Resend</a>
+        </div>
+
+        @if(session('success'))
+            <div class="success-message">
+                {{ session('success') }}
+            </div>
+        @endif
     </div>
 
+    <script>
+        document.getElementById('resend-otp').addEventListener('click', function(e) {
+            e.preventDefault();
 
-@if(session('success'))
-    <div class="success-message" style="color: green; text-align:center; margin-top:10px;">
-        {{ session('success') }}
-    </div>
-@endif
-
-    </div>
-</body>
-<script>
-document.getElementById('resend-otp').addEventListener('click', function(e) {
-    e.preventDefault();
-
-    fetch("{{ route('otp.resend') }}")
-        .then(res => res.json())
-        .then(data => {
-            alert(data.message); // optional: show success message
-            if(data.success && data.redirect){
-                // redirect the user to OTP screen
-                window.location.href = data.redirect;
-            }
-        })
-        .catch(err => {
-            alert('Something went wrong. Please try again.');
+            fetch("{{ route('otp.resend') }}")
+                .then(res => res.json())
+                .then(data => {
+                    alert(data.message);
+                    if(data.success && data.redirect){
+                        window.location.href = data.redirect;
+                    }
+                })
+                .catch(err => {
+                    alert('Something went wrong. Please try again.');
+                });
         });
-});
-</script>
-
+    </script>
+</body>
 </html>
