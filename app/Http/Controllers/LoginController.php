@@ -103,16 +103,23 @@ public function verifyOtp(Request $request)
         session(['otp_verified' => true]);
 
         // Fully log in the user
-        $user = \App\Models\User::where('email', $email)->first();
+        $user = User::where('email', $email)->first();
         Auth::login($user);
 
+        // Clear OTP from cache
         Cache::forget('otp_' . $email);
 
-        return redirect('/')->with('success', 'Login successful!');
+        // Redirect based on role
+        if ($user->role === 'admin') {
+            return redirect()->route('admin.dashboard')->with('success', 'Login successful! Welcome Admin.');
+        } else {
+            return redirect('/')->with('success', 'Login successful!');
+        }
     }
 
     return back()->withErrors(['otp' => 'Invalid or expired OTP']);
 }
+
 
 
     /**
